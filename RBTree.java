@@ -141,7 +141,18 @@ public class RBTree {
 
         //case 1: no children. just delete the node and disconnect from parent.
         if (left == null && right == null){
-            node.getRoot()
+
+            //cache root
+            RBNode root = node.getRoot();
+
+            //check if node is the left child or right child
+            //TODO: MAKE SURE IT ACTUALLY DETECTS NODE BY ADDRESS
+            if(root.getLeft() == node) {
+                root.setLeft(null);
+            }
+            else {
+                root.setRight(null);
+            }
         }
 
 
