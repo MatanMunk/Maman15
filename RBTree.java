@@ -1,90 +1,108 @@
 import javax.naming.directory.SearchResult;
 
-public class RBTree {
+public class RBTree<T> {
 
-    //private class
-    private class SearchResult{
+    //private helper SearchResult class
+    private class SearchResult {
+
+        //declaring variables
         private boolean success;
         private RBNode node;
 
-        public SearchResult(boolean isSucceeded, RBNode node){
+        //constructor
+        public SearchResult(boolean isSucceeded, RBNode node) {
             this.success = isSucceeded;
             this.node = node;
         }
 
-        public boolean isSucceeded(){
+        //getters
+        public boolean isSucceeded() {
             return this.success;
         }
 
-        public RBNode getNode(){
+        public RBNode getNode() {
             return this.node;
         }
     }
 
+
+    //declaring variables
     private RBNode root;
 
+    //constructor
     public RBTree(RBNode root) {
         this.root = root;
     }
 
-    public void insert(RBNode nodeToInsert, RBNode treeNode){
+
+    //insert new item to the tree.
+    public void insert(double key, T data){
+        insertNode(new RBNode(key, data), null);
+    }
+
+    //private function to handle insertion of a node
+    private void insertNode(RBNode nodeToInsert, RBNode currentNode) {
+
+        //if root is null (tree is empty), then insert node to the root of the tree.
         if (this.root == null) {
             this.root = nodeToInsert;
         }
-        else{
-            if (treeNode == null){
-                treeNode = this.root;
+
+        //if tree isn't empty, insert as normal
+        else {
+            if (currentNode == null) {
+                currentNode = this.root;
             }
 
             //cache key to insert, left and right children
-            RBNode left = treeNode.getLeft();
-            RBNode right = treeNode.getRight();
+            RBNode left = currentNode.getLeft();
+            RBNode right = currentNode.getRight();
             double key = nodeToInsert.getKey();
-            double treeKey = treeNode.getKey();
+            double currentKey = currentNode.getKey();
 
-            if (key == treeKey){
+            if (key == currentKey) {
                 //TODO: insert in the inside RBtree of the node because of heights
             }
 
             //if key is smaller, go left
-            if (key < treeNode.getKey())
-            {
+            if (key < currentNode.getKey()) {
 
                 //if current node has left children, call insert again with left
-                if (left != null){
-                    insert(nodeToInsert, left);
+                if (left != null) {
+                    insertNode(nodeToInsert, left);
                 }
 
                 //no left child, insert to left
-                else{
-                    treeNode.setLeft(nodeToInsert);
-                    nodeToInsert.setRoot(treeNode);
+                else {
+                    currentNode.setLeft(nodeToInsert);
+                    nodeToInsert.setRoot(currentNode);
                     //TODO: change colors & rotates
                 }
             }
 
             //key is larger, go right
-            else{
+            else {
 
                 //right isn't null, insert there
-                if (right != null){
-                    insert(nodeToInsert, right);
+                if (right != null) {
+                    insertNode(nodeToInsert, right);
                 }
 
                 //right is null, insert to right
-                else{
-                    treeNode.setRight(nodeToInsert);
-                    nodeToInsert.setRoot(treeNode);
+                else {
+                    currentNode.setRight(nodeToInsert);
+                    nodeToInsert.setRoot(currentNode);
                     //TODO: change colors & rotates
                 }
             }
         }
     }
 
-    public SearchResult search(RBNode node, double searchKey){
+    //search for a node in the tree. returns a SearchResult object.
+    public SearchResult search(RBNode node, double searchKey) {
 
         //if node is null, start at root
-        if (node == null){
+        if (node == null) {
             node = this.root;
         }
 
@@ -92,13 +110,13 @@ public class RBTree {
         double nodeKey = node.getKey();
 
         //if key found, return it
-        if (searchKey == nodeKey){
+        if (searchKey == nodeKey) {
             return new SearchResult(true, node);
         }
 
         //key not found, search children if they exists or return not found if they don't
         //check if key is in left child
-        else if (searchKey < nodeKey){
+        else if (searchKey < nodeKey) {
 
             //cache left child
             RBNode left = node.getLeft();
@@ -109,13 +127,13 @@ public class RBTree {
             }
 
             //failed search
-            else{
+            else {
                 return new SearchResult(false, node);
             }
         }
 
         //key must be at right child
-        else{
+        else {
 
             //cache right child
             RBNode right = node.getRight();
@@ -126,50 +144,105 @@ public class RBTree {
             }
 
             //failed search
-            else{
+            else {
                 return new SearchResult(false, node);
             }
         }
     }
 
-    public void delete(RBNode node){
-        //TODO: 3 casses
+    //delete a node by key value
+    public void delete(double key) {
+
+        //search for the key to see if it's in the tree
+        SearchResult searchResult = search(this.root, key);
+
+        //if it's in the tree, delete it from it
+        if (searchResult.isSucceeded()) {
+            this.deleteNode(searchResult.getNode());
+        }
+
+        //key not in tree
+        else {
+            //TODO: key doesn't exists, decide how to handle it, if at all.
+        }
+    }
+
+    //private function to handle deletion of a node
+    private void deleteNode(RBNode node) {
 
         //cache variables
         RBNode left = node.getLeft();
         RBNode right = node.getRight();
+        RBNode root = node.getRoot();
 
-        //case 1: no children. just delete the node and disconnect from parent.
-        if (left == null && right == null){
+        //TODO: handle colors and rotates in all cases.
+        //find how many children node has, then handle how to delete the node.
+        switch (node.getChildrenNumber()) {
 
-            //cache root
-            RBNode root = node.getRoot();
+            //case 1: no children. just delete the node and disconnect from parent.
+            case 0:
 
-            //check if node is the left child or right child
-            //TODO: MAKE SURE IT ACTUALLY DETECTS NODE BY ADDRESS
-            if(root.getLeft() == node) {
-                root.setLeft(null);
-            }
-            else {
-                root.setRight(null);
-            }
+                //delete references from root's child (left or right) and node's root
+                root.setChild(node.getSideType(), null);
+                node.setRoot(null);
+                break;
+
+            //case 2: only one child. connect that child to root and disconnect connections on node.
+            case 1:
+
+                //set child RBNode for more readable code
+                RBNode child;
+
+                //if left isn't null, the child is left
+                if (left != null) {
+                    child = left;
+                }
+
+                //else child is right
+                else {
+                    child = right;
+                }
+
+                //set root as the root of child
+                child.setRoot(root);
+
+                //replace node with child for root, with the correct side
+                root.setChild(node.getSideType(), child);
+
+                //delete references from node
+                node.setRoot(null);
+                node.setChild(child.getSideType(), null);
+                break;
+
+            //case 3: two children exists
+            case 2:
+                //TODO: Check how Amiel handled this situation
+                break;
+            default:
+                //TODO: throw error, shouldn't happen
+                break;
         }
-
-
     }
 
-    private RBNode findSuccessor(RBNode node){
+    //find successor of a node
+    private RBNode findSuccessor(RBNode node) {
+        //TODO: find out how to find successor
+        return null;
     }
 
-    private RBNode findPredaccesor(RBNode node){
-
+    //find predecessor of a node
+    private RBNode findPredecessor(RBNode node) {
+        //TODO: find out how to find predecessor
+        return null;
     }
 
-    private void rotateRight(RBNode node){
-        System.out.println("ricky this is my change, this is my change or your change");
+    //rotate the node right
+    private void rotateRight(RBNode node) {
+        //TODO: find out rotation algorithm
     }
 
-    private void rotateLeft(RBNode node){
-
+    //rotate the node left
+    private void rotateLeft(RBNode node) {
+        //TODO: find out rotation algorithm
     }
 }
