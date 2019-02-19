@@ -237,25 +237,40 @@ public class RBTree<T> {
     }
 
     //rotate the node right
-    private void rotateRight(RBNode node) {
-        //TODO: find out rotation algorithm
+    private void rotateRight(RBNode x) {
+        RBNode y = x.getLeft();
+        x.setLeft(y.getRight());   //turns y's right subtree into x's left subtree
+        if (y.getRight() != null )     
+            (y.getRight()).setRoot(x); // y's right child new parnet is x(if y really exist).
+        
+        y.setRoot(x.getRoot());        // y's new parent is x's old parent
+        if (x.getRoot() == null)
+            this.root = y;              // if the x did not have a parent, than he was the root of the tree, and now y is.
+        else if (x == (x.getRoot()).getLeft()) //if x was left child.    
+            (x.getRoot()).setLeft(y);
+        else                              // if x was right child.
+            (x.getRoot()).setRight(y);
+        
+        y.setRight(x);                    //x is y's right child
+        x.setRoot(y);                     //y is the parent of x
     }
-
+    
+    //rotate the node Left
     private void rotateLeft(RBNode x) {
         RBNode y = x.getRight();
-        x.setChild(Right,y.getLeft());   //turns y's left subtree into x's right subtree
+        x.setRight(y.getLeft());   //turns y's left subtree into x's right subtree
         if (y.getLeft() != null )     
-            (y.getLeft()).getRoot() = x; // y's left child new parnet is x(if y really exist).
+            (y.getLeft()).setRoot(x); // y's left child new parnet is x(if y really exist).
         
-        y.getRoot() = x.getRoot;        // y's new parent is x's  parent
-        if (x.getRoot == null)
+        y.setRoot(x.getRoot());        // y's new parent is x's old parent
+        if (x.getRoot() == null)
             this.root = y;              // if the x did not have a parent, than he was the root of the tree, and now y is.
-        else if (x == (x.getRoot()).getLeft) //if x was left child.    
-            (x.getRoot()).setChild(Left,y);
+        else if (x == (x.getRoot()).getLeft()) //if x was left child.    
+            (x.getRoot()).setLeft(y);
         else                              // if x was right child.
-            (x.getRoot()).setChild(Right,y);
+            (x.getRoot()).setRight(y);
         
-        y.setChild(Left, x);
-        x.getRoot() = y;
-        }
+        y.setLeft(x);                     //x is y's left child
+        x.setRoot(y);                     //y is the parent of x
+    }
 }
