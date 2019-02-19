@@ -241,11 +241,21 @@ public class RBTree<T> {
         //TODO: find out rotation algorithm
     }
 
-    private void rotateLeft(RBNode node) {
-        RBNode y = node.getRight();
-        if (y.getLeft() != null ){ 
-            node.setChild(Right,y.getLeft()); //turns y's left subtree into node's right subtree
-            y.getRoot() = node;
+    private void rotateLeft(RBNode x) {
+        RBNode y = x.getRight();
+        x.setChild(Right,y.getLeft());   //turns y's left subtree into x's right subtree
+        if (y.getLeft() != null )     
+            (y.getLeft()).getRoot() = x; // y's left child new parnet is x(if y really exist).
+        
+        y.getRoot() = x.getRoot;        // y's new parent is x's  parent
+        if (x.getRoot == null)
+            this.root = y;              // if the x did not have a parent, than he was the root of the tree, and now y is.
+        else if (x == (x.getRoot()).getLeft) //if x was left child.    
+            (x.getRoot()).setChild(Left,y);
+        else                              // if x was right child.
+            (x.getRoot()).setChild(Right,y);
+        
+        y.setChild(Left, x);
+        x.getRoot() = y;
         }
-    }
 }
