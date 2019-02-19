@@ -241,8 +241,11 @@ public class RBTree<T> {
         //TODO: find out rotation algorithm
     }
 
-    //rotate the node left
     private void rotateLeft(RBNode node) {
-        //TODO: find out rotation algorithm
+        RBNode y = node.getRight();
+        if (y.getLeft() != null ){ 
+            node.setChild(Right,y.getLeft()); //turns y's left subtree into node's right subtree
+            y.getRoot() = node;
+        }
     }
 }
