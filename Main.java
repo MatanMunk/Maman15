@@ -27,5 +27,6 @@ public class Main {
         System.out.println("Right Child: " + /* (node1.getRight()).getKey()  + */ " || Left Child: " + (node1.getLeft()).getKey() + " || Parent: " + (node1.getRoot()).getKey());
         
         System.out.println("END");
+		// Bugs!!!! we have bugs everywhere!!!, look at the data.
     }
 }
