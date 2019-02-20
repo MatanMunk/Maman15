@@ -1,5 +1,6 @@
 public class Main {
     public static void main(String[] args) {
+        public static void main(String[] args) {
         RBNode node1 = new RBNode(5,"e");
         RBTree T = new RBTree(node1);
         T.insert(2,"b");//				|5|
@@ -11,6 +12,11 @@ public class Main {
         T.insert(8,"h");
         T.insert(9,"i");
         T.insert(10,"j");
+        
+        System.out.println("Test to insert function:");
+        System.out.println("node1 |5|: " + "Right Child: " + (node1.getRight()).getKey() + " || Left Child: " + (node1.getLeft()).getKey() + " || Parent: " + node1.getRoot());
+        System.out.println("node1 Left child |2|: " + "Right Child: " + ((node1.getLeft()).getRight()).getKey() + " || Left Child: " + ((node1.getLeft()).getLeft()).getKey() + " || Parent: " + ((node1.getLeft()).getRoot()).getKey());
+        
         
         System.out.println("START:");
         System.out.println("Right Child: " + node1.getRight() + " || Left Child: " + node1.getLeft() + " || Parent: " + node1.getRoot());
