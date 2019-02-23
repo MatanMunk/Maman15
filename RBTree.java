@@ -36,7 +36,7 @@ public class RBTree<T> {
 
 
     //insert new item to the tree.
-    public void insert(double key, T data){
+    public void insert(double key, T data) {
         insertNode(new RBNode(key, data), null);
     }
 
@@ -237,11 +237,25 @@ public class RBTree<T> {
     }
 
     //rotate the node right
-    private void rotateRight(RBNode node) {
-        //TODO: find out rotation algorithm
+    private void rotateRight(RBNode x) {
+        RBNode y = x.getLeft();
+        x.setLeft(y.getRight());   //turns y's right subtree into x's left subtree
+        if (y.getRight() != null)
+            (y.getRight()).setRoot(x); // y's right child new parnet is x(if y really exist).
+
+        y.setRoot(x.getRoot());        // y's new parent is x's old parent
+        if (x.getRoot() == null)
+            this.root = y;              // if the x did not have a parent, than he was the root of the tree, and now y is.
+        else if (x == (x.getRoot()).getLeft()) //if x was left child.    
+            (x.getRoot()).setLeft(y);
+        else                              // if x was right child.
+            (x.getRoot()).setRight(y);
+
+        y.setRight(x);                    //x is y's right child
+        x.setRoot(y);                     //y is the parent of x
     }
 
+    //rotate the node Left
     private void rotateLeft(RBNode x) {
-
-        }
+    }
 }
